@@ -1,0 +1,25 @@
+class product_title():
+    def __init__(self, product):
+        from selenium import webdriver
+        from bs4 import BeautifulSoup
+        import pandas as pd
+        import requests
+        browser = webdriver.Chrome()
+        browser.get('https://www.pcstore.com.tw/')
+        test = browser.find_element_by_xpath('//*[@id="id_search_word"]')
+        test.clear
+        test.send_keys(product)
+        browser.find_element_by_xpath('//*[@id="top-search"]/img').click()
+        soup = BeautifulSoup(browser.page_source, 'html.parser')
+        lis = []
+        for ele in soup.select('#keyad-pro-right3 .pic2t.pic2t_bg a'):
+            lis.append(ele.text)
+        for ele in soup.select('#keyad-pro-right3 .pic2t.priority1_tit a'):
+            lis.append(ele.text)
+        for ele in soup.select('#keyad-pro-right3 .pic2t.priority_tit a'):
+            lis.append(ele.text)
+        browser.close()
+        df = pd.DataFrame(lis,columns = ['Title'])
+        self.product = df
+test = product_title('手錶')
+print(test.product)
